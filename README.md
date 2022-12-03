@@ -18,19 +18,19 @@
 
 ### b) de développement  :
 
-- [ ] utiliser le contrôle de version
-- [ ] utiliser des mécanismes de «build»  (comme le Travis, le Maven, le Gradle, etc)
+- [x] utiliser le contrôle de version
+- [x] utiliser des mécanismes de «build»  (comme le Travis, le Maven, le Gradle, etc)
 - [ ] optionnel: utiliser une version préliminaire des techniques de «Continuous Integration»
     - Outils suggérées:  Jenkins, TravisCI,  CircleCI, GitLab, etc
 
 ### c) architecteturaux :
 
-- [ ] créer un microservice pour chaque exigence fonctionnelle
+- [x] créer un microservice pour chaque exigence fonctionnelle
 - [ ] optionnel : créer des tests unitaires pour les microservices
-- [ ] optionnel : fournir un API gateway pour les microservices
-- [ ] utiliser dans l'architecture un load balancer
+- [x] optionnel : fournir un API gateway pour les microservices
+- [x] utiliser dans l'architecture un load balancer
     - optionnel : Travailler avec [Docker Compose](https://docs.docker.com/compose)
-- [ ] utiliser comme outil de données le MongoDB ou le Firebase Database
+- [x] utiliser comme outil de données le MongoDB ou le Firebase Database
 
 ### d) de documentation :
 
