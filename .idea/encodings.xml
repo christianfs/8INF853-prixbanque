@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/prixbanque/account-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/account-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/api-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/api-gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/authentication-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/authentication-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/discovery-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/discovery-server/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/statement-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/statement-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/transfer-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prixbanque/transfer-service/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
