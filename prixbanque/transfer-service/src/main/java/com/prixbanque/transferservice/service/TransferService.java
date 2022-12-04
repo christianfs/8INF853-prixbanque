@@ -28,7 +28,7 @@ public class TransferService {
                 .build();
 
         transferRepository.save(transfer);
-        log.info("Transfer {} - key {} is created", transfer.getId());
+        log.info("Transfer {} is created", transfer.getId());
     }
 
     public TransferResponse getTransfer(UUID confirmationKey, String recipientsEmail) {
