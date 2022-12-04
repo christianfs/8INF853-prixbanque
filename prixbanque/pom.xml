@@ -70,7 +70,7 @@
                 <version>3.2.1</version>
                 <configuration>
                     <from>
-                        <image>eclipse-temurin:11.0.12_7-jre</image>
+                        <image>eclipse-temurin:11.0.17_8-jre-alpine</image>
                     </from>
                     <to><image>registry.hub.docker.com/csegovia/${artifactId}</image></to>
                 </configuration>
