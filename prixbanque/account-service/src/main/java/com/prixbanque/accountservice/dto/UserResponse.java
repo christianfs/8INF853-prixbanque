@@ -1,21 +1,16 @@
-package com.prixbanque.accountservice.entity;
-
+package com.prixbanque.accountservice.dto;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-@Data//lombock
-@NoArgsConstructor
+@Data
+@Builder
 @AllArgsConstructor
-@Entity
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+@NoArgsConstructor
+@Document(value = "user")
+public class UserResponse {
     private Long userId;
     private String firstName;
     private String lastName;
@@ -24,8 +19,4 @@ public class User {
     private String address;
     private String password;
     private String account;
-
-
-
-
 }

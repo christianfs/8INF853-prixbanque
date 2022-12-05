@@ -1,22 +1,28 @@
 package com.prixbanque.accountservice.controller;
 
-import org.slf4j.LoggerFactory;
+import com.prixbanque.accountservice.dto.UserRequest;
+import com.prixbanque.accountservice.dto.UserResponse;
+import com.prixbanque.accountservice.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import com.prixbanque.accountservice.entity.User;
-import org.springframework.ui.Model;
-import org.slf4j.Logger;
+import org.springframework.http.HttpStatus;
+
+import java.util.List;
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/api/account")
+@RequiredArgsConstructor
 public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    @GetMapping("/register")
-    public String register(@ModelAttribute User user, Model model){
-        model.addAttribute("user",user);
-        return "register";
+
+    private final UserService userService;
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createAccount(@RequestBody UserRequest userRequest){
+        userService.createAccount(userRequest);
     }
 
-    @PostMapping("/register")
-    public void save(User user){
-        log.info(">> User : {}", user.toString());
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserResponse> getAllUsers(){
+       return userService.getAllUsers();
     }
 }
