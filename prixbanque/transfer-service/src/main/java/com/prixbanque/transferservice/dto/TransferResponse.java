@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Data
 @Builder
@@ -17,4 +18,6 @@ public class TransferResponse {
     private String recipientsEmail;
     private BigDecimal value;
     private Boolean transferCompleted;
+    private Instant createdDate;
+    private Instant lastModifiedDate;
 }

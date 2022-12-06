@@ -81,6 +81,8 @@ public class TransferService {
                 .recipientsEmail(transfer.getRecipientsEmail())
                 .transferCompleted(transfer.getTransferCompleted())
                 .value(transfer.getValue())
+                .createdDate(transfer.getCreatedDate())
+                .lastModifiedDate(transfer.getLastModifiedDate())
                 .build();
     }
 }
