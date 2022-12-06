@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Document(value = "user")
 public class UserResponse {
-    private Long userId;
+    private String userId;
     private String firstName;
     private String lastName;
     private String email;
