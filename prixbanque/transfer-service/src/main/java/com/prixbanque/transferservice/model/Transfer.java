@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Transfer {
     @Id
     private String id;
-    private String sendersAccountNumber;
+    private String accountNumber;
     private String recipientsEmail;
     private UUID confirmationKey;
     private BigDecimal value;

@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class TransferResponse {
     private String id;
-    private String sendersAccountNumber;
+    private String accountNumber;
     private String recipientsEmail;
     private BigDecimal value;
     private Boolean transferCompleted;

@@ -19,7 +19,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,7 +67,7 @@ public class TransferServiceApplicationTests {
         return Transfer.builder()
                 .value(BigDecimal.valueOf(3000))
                 .recipientsEmail("recipient@email.com")
-                .sendersAccountNumber("12345-67")
+                .accountNumber("12345-67")
                 .transferCompleted(false)
                 .confirmationKey(UUID.randomUUID())
                 .build();
@@ -76,7 +75,7 @@ public class TransferServiceApplicationTests {
 
     private TransferRequest getTransferRequest() {
         return TransferRequest.builder()
-                .sendersAccountNumber("67453-21")
+                .accountNumber("67453-21")
                 .recipientsEmail("recipient2@email.com")
                 .value(BigDecimal.valueOf(50000))
                 .build();

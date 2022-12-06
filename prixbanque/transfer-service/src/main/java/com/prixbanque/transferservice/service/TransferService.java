@@ -10,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +26,7 @@ public class TransferService {
     public void createTransfer(TransferRequest transferRequest) {
         Transfer transfer = Transfer.builder()
                 .recipientsEmail(transferRequest.getRecipientsEmail())
-                .sendersAccountNumber(transferRequest.getSendersAccountNumber())
+                .accountNumber(transferRequest.getAccountNumber())
                 .value(transferRequest.getValue())
                 .confirmationKey(UUID.randomUUID())
                 .transferCompleted(false)
@@ -34,7 +36,7 @@ public class TransferService {
         kafkaTemplate.send("notificationTopic",
                 new TransferPlacedEvent(
                         transfer.getId(),
-                        transfer.getSendersAccountNumber(),
+                        transfer.getAccountNumber(),
                         transfer.getRecipientsEmail(),
                         transfer.getConfirmationKey(),
                         transfer.getValue())
@@ -42,20 +44,40 @@ public class TransferService {
         log.info("Transfer {} is created", transfer.getId());
     }
 
-    public TransferResponse getTransfer(UUID confirmationKey, String recipientsEmail) {
-        Optional<Transfer> transfer = transferRepository.findByConfirmationKeyAndRecipientsEmail(confirmationKey, recipientsEmail);
+    public Boolean commitTransfer(UUID confirmationKey, String recipientsEmail) {
+        Optional<Transfer> optionalTransfer = transferRepository.findByConfirmationKeyAndRecipientsEmail(confirmationKey, recipientsEmail);
 
-        if(transfer.isEmpty()) {
-            return new TransferResponse();
+        if(optionalTransfer.isEmpty()) {
+            return false;
         }
 
-        return  mapToTransferResponse(transfer.get());
+        Transfer transfer = optionalTransfer.get();
+
+        if(transfer.getTransferCompleted()) {
+            return false;
+        }
+
+        transfer.setTransferCompleted(true);
+        transferRepository.save(transfer);
+        return true;
+    }
+
+    public List<TransferResponse> getAllTransfersByAccountNumber(String accountNumber) {
+        Optional<List<Transfer>> optionalTransfers = transferRepository.findByAccountNumber(accountNumber);
+
+        if(optionalTransfers.get().isEmpty()) {
+            return List.of();
+        }
+
+        return optionalTransfers.get().stream()
+                .map(transfer -> mapToTransferResponse(transfer))
+                .collect(Collectors.toList());
     }
 
     private TransferResponse mapToTransferResponse(Transfer transfer) {
         return TransferResponse.builder()
                 .id(transfer.getId())
-                .sendersAccountNumber(transfer.getSendersAccountNumber())
+                .accountNumber(transfer.getAccountNumber())
                 .recipientsEmail(transfer.getRecipientsEmail())
                 .transferCompleted(transfer.getTransferCompleted())
                 .value(transfer.getValue())
