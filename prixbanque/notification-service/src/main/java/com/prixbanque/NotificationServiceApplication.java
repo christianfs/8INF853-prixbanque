@@ -14,8 +14,14 @@ public class NotificationServiceApplication {
     }
 
     @KafkaListener(topics = "notificationTopic")
-    public void handleNotification(TransferPlacedEvent transferPlacedEvent) {
+    public void handleNotification(NotificationPlacedEvent notificationPlacedEvent) {
         // send out an email notification
-        log.info("Received Notification for Transfer confirmation key - {}", transferPlacedEvent.getConfirmationKey());
+        log.info("Id {}, name {}, account {}, email {}, confirmationKey {}, value {}",
+                notificationPlacedEvent.getId(),
+                notificationPlacedEvent.getFullName(),
+                notificationPlacedEvent.getAccountNumber(),
+                notificationPlacedEvent.getRecipientsEmail(),
+                notificationPlacedEvent.getConfirmationKey(),
+                notificationPlacedEvent.getValue());
     }
 }

@@ -23,7 +23,7 @@ public class TransferController {
         transferService.createTransfer(transferRequest);
     }
 
-    @PostMapping(path = "/commit")
+    @PutMapping(path = "/commit")
     @ResponseStatus(HttpStatus.OK)
     public Boolean commitTransfer(@RequestParam(name = "confirmationKey") UUID confirmationKey, @RequestParam(name = "recipientsEmail") String recipientsEmail) {
         return transferService.commitTransfer(confirmationKey, recipientsEmail);

@@ -10,10 +10,12 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransferPlacedEvent {
+public class NotificationPlacedEvent {
     private String id;
-    private String sendersAccountNumber;
+    private String fullName;
+    private String accountNumber;
     private String recipientsEmail;
     private UUID confirmationKey;
     private BigDecimal value;
+    private String type;
 }

@@ -2,7 +2,7 @@ package com.prixbanque.transferservice.service;
 
 import com.prixbanque.transferservice.dto.TransferRequest;
 import com.prixbanque.transferservice.dto.TransferResponse;
-import com.prixbanque.transferservice.event.TransferPlacedEvent;
+import com.prixbanque.transferservice.event.NotificationPlacedEvent;
 import com.prixbanque.transferservice.model.Transfer;
 import com.prixbanque.transferservice.repository.TransferRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class TransferService {
 
     private final TransferRepository transferRepository;
-    private final KafkaTemplate<String, TransferPlacedEvent> kafkaTemplate;
+    private final KafkaTemplate<String, NotificationPlacedEvent> kafkaTemplate;
 
     public void createTransfer(TransferRequest transferRequest) {
         Transfer transfer = Transfer.builder()
@@ -34,12 +34,14 @@ public class TransferService {
 
         transferRepository.save(transfer);
         kafkaTemplate.send("notificationTopic",
-                new TransferPlacedEvent(
+                new NotificationPlacedEvent(
                         transfer.getId(),
+                        "",
                         transfer.getAccountNumber(),
                         transfer.getRecipientsEmail(),
                         transfer.getConfirmationKey(),
-                        transfer.getValue())
+                        transfer.getValue(),
+                        "transfer")
         );
         log.info("Transfer {} is created", transfer.getId());
     }
