@@ -1,5 +1,6 @@
 package com.prixbanque.transferservice.service;
 
+import com.prixbanque.transferservice.dto.AccountResponse;
 import com.prixbanque.transferservice.dto.TransferRequest;
 import com.prixbanque.transferservice.dto.TransferResponse;
 import com.prixbanque.transferservice.event.NotificationPlacedEvent;
@@ -34,20 +35,28 @@ public class TransferService {
                 .transferCompleted(false)
                 .build();
 
-        // TODO: Validar se o account number existe
+        AccountResponse result = webClientBuilder.build().get()
+                .uri("http://account-service/api/account",
+                        uriBuilder -> uriBuilder.path("/{accountNumber}")
+                        .build(transfer.getAccountNumber()))
+                .retrieve()
+                .bodyToMono(AccountResponse.class)
+                .block();
 
-        transferRepository.save(transfer);
-        kafkaTemplate.send("notificationTopic",
-                new NotificationPlacedEvent(
-                        transfer.getId(),
-                        "",
-                        transfer.getAccountNumber(),
-                        transfer.getRecipientsEmail(),
-                        transfer.getConfirmationKey(),
-                        transfer.getValue(),
-                        "transfer")
-        );
-        log.info("Transfer {} is created", transfer.getId());
+        if(result != null) {
+            transferRepository.save(transfer);
+            kafkaTemplate.send("notificationTopic",
+                    new NotificationPlacedEvent(
+                            transfer.getId(),
+                            "",
+                            transfer.getAccountNumber(),
+                            transfer.getRecipientsEmail(),
+                            transfer.getConfirmationKey(),
+                            transfer.getValue(),
+                            "transfer")
+            );
+            log.info("Account Transfer {} is created", transfer.getAccountNumber());
+        }
     }
 
     public Boolean commitTransfer(UUID confirmationKey, String recipientsEmail) {

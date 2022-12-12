@@ -29,6 +29,12 @@ public class AccountController {
         return accountService.getAllAccounts();
     }
 
+    @GetMapping(path = "/{accountNumber}")
+    @ResponseStatus(HttpStatus.OK)
+    public AccountResponse getAccount(@PathVariable String accountNumber){
+        return accountService.getAccountByAccountNumber(accountNumber);
+    }
+
     @PutMapping(path = "/deposit")
     @ResponseStatus(HttpStatus.OK)
     public Boolean deposit(@RequestBody TransactionRequest transactionRequest){

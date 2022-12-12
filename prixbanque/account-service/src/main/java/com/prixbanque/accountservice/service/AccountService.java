@@ -64,7 +64,15 @@ public class AccountService {
         log.info("Account {} is saved", account.getAccountNumber());
     }
 
-    private Account getAccountByAccountNumber(String accountNumber) {
+    public AccountResponse getAccountByAccountNumber(String accountNumber) {
+        Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
+        if(optionalAccount.isEmpty()) {
+            return null;
+        }
+        return mapToAccountResponse(optionalAccount.get());
+    }
+
+    private Account getAccount(String accountNumber) {
         Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
         if(optionalAccount.isEmpty()) {
             return null;
@@ -97,7 +105,7 @@ public class AccountService {
     }
 
     public Boolean deposit(TransactionRequest transactionRequest) {
-        Account account = getAccountByAccountNumber(transactionRequest.getAccountNumber());
+        Account account = getAccount(transactionRequest.getAccountNumber());
 
         account.setBalance(account.getBalance().add(transactionRequest.getValue()));
         accountRepository.save(account);
@@ -105,7 +113,7 @@ public class AccountService {
     }
 
     public Boolean withdraw(TransactionRequest transactionRequest) {
-        Account account = getAccountByAccountNumber(transactionRequest.getAccountNumber());
+        Account account = getAccount(transactionRequest.getAccountNumber());
         if (account.getBalance().compareTo(transactionRequest.getValue()) < 0) {
             return false;
         }
