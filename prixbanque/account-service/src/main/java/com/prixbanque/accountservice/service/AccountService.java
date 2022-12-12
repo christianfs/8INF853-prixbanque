@@ -64,7 +64,7 @@ public class AccountService {
         log.info("Account {} is saved", account.getAccountNumber());
     }
 
-    private Account getAccountByAccountNumberAndEmail(String accountNumber) {
+    private Account getAccountByAccountNumber(String accountNumber) {
         Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
         if(optionalAccount.isEmpty()) {
             return null;
@@ -97,7 +97,7 @@ public class AccountService {
     }
 
     public Boolean deposit(TransactionRequest transactionRequest) {
-        Account account = getAccountByAccountNumberAndEmail(transactionRequest.getAccountNumber());
+        Account account = getAccountByAccountNumber(transactionRequest.getAccountNumber());
 
         account.setBalance(account.getBalance().add(transactionRequest.getValue()));
         accountRepository.save(account);
@@ -105,7 +105,7 @@ public class AccountService {
     }
 
     public Boolean withdraw(TransactionRequest transactionRequest) {
-        Account account = getAccountByAccountNumberAndEmail(transactionRequest.getAccountNumber());
+        Account account = getAccountByAccountNumber(transactionRequest.getAccountNumber());
         if (account.getBalance().compareTo(transactionRequest.getValue()) < 0) {
             return false;
         }
@@ -115,7 +115,24 @@ public class AccountService {
         return true;
     }
 
-    public Boolean tansfer(TransferRequest transferRequest) {
+    @Transactional
+    public Boolean transfer(TransferRequest transferRequest) {
+        Optional<Account> recipientsAccount = accountRepository.findByEmail(transferRequest.getRecipientsEmail());
+        if(recipientsAccount.isEmpty()) {
+            return false;
+        }
+
+        Optional<Account> account = accountRepository.findByAccountNumber(transferRequest.getAccountNumber());
+        if(account.isEmpty()) {
+            return false;
+        }
+
+        if(withdraw(new TransactionRequest(account.get().getAccountNumber(), transferRequest.getValue()))) {
+             if(deposit(new TransactionRequest(recipientsAccount.get().getAccountNumber(), transferRequest.getValue()))) {
+                 return true;
+             }
+        }
+
         return false;
     }
 }

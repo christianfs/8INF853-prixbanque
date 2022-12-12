@@ -44,6 +44,6 @@ public class AccountController {
     @PutMapping(path = "/transfer")
     @ResponseStatus(HttpStatus.OK)
     public Boolean transfer(@RequestBody TransferRequest transferRequest){
-        return accountService.tansfer(transferRequest);
+        return accountService.transfer(transferRequest);
     }
 }
