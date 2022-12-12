@@ -117,8 +117,8 @@ public class AccountService {
 
     @Transactional
     public Boolean transfer(TransferRequest transferRequest) {
-        Optional<Account> recipientsAccount = accountRepository.findByEmail(transferRequest.getRecipientsEmail());
-        if(recipientsAccount.isEmpty()) {
+        Optional<Customer> recipientCustomer = customerRepository.findByEmail(transferRequest.getRecipientsEmail());
+        if(recipientCustomer.isEmpty()) {
             return false;
         }
 
@@ -128,7 +128,7 @@ public class AccountService {
         }
 
         if(withdraw(new TransactionRequest(account.get().getAccountNumber(), transferRequest.getValue()))) {
-             if(deposit(new TransactionRequest(recipientsAccount.get().getAccountNumber(), transferRequest.getValue()))) {
+             if(deposit(new TransactionRequest(recipientCustomer.get().getAccount().getAccountNumber(), transferRequest.getValue()))) {
                  return true;
              }
         }

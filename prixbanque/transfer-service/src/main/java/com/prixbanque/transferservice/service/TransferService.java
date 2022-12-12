@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ public class TransferService {
 
     private final TransferRepository transferRepository;
     private final KafkaTemplate<String, NotificationPlacedEvent> kafkaTemplate;
+    private final WebClient.Builder webClientBuilder;
 
     public void createTransfer(TransferRequest transferRequest) {
         Transfer transfer = Transfer.builder()
@@ -31,6 +33,8 @@ public class TransferService {
                 .confirmationKey(UUID.randomUUID())
                 .transferCompleted(false)
                 .build();
+
+        // TODO: Validar se o account number existe
 
         transferRepository.save(transfer);
         kafkaTemplate.send("notificationTopic",
@@ -59,9 +63,23 @@ public class TransferService {
             return false;
         }
 
-        transfer.setTransferCompleted(true);
-        transferRepository.save(transfer);
-        return true;
+        Boolean result = webClientBuilder.build().put()
+                .uri("http://account-service/api/account/transfer")
+                .bodyValue(new TransferRequest(
+                        transfer.getAccountNumber(),
+                        transfer.getRecipientsEmail(),
+                        transfer.getValue())
+                )
+                .retrieve()
+                .bodyToMono(Boolean.class)
+                .block();
+
+        if(result) {
+            transfer.setTransferCompleted(true);
+            transferRepository.save(transfer);
+            return true;
+        }
+        return false;
     }
 
     public List<TransferResponse> getAllTransfersByAccountNumber(String accountNumber) {
