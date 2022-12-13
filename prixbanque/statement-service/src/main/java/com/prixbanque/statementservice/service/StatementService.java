@@ -44,7 +44,7 @@ public class StatementService {
         Instant start = formatterStart.parse(startDate).toInstant().atZone(ZoneOffset.UTC).withHour(0).withMinute(0).withSecond(0).withNano(0).toInstant();
         Instant end = formatterEnd.parse(endDate).toInstant().atZone(ZoneOffset.UTC).withHour(23).withMinute(59).withSecond(59).withNano(999999999).toInstant();
 
-        Optional<List<Statement>> optionalStatements = statementRepository.findByCreatedDateBetween(start, end);
+        Optional<List<Statement>> optionalStatements = statementRepository.findByAccountNumberAndCreatedDateBetween(accountNumber, start, end);
 
         if(optionalStatements.get().isEmpty()) {
             return List.of();

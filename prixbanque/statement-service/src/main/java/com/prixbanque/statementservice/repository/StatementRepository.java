@@ -9,6 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StatementRepository extends MongoRepository<Statement, String> {
-    @Query(value = "{ 'createdDate' : {$gte : ?0, $lte: ?1 }}")
-    Optional<List<Statement>> findByCreatedDateBetween(Instant startDate, Instant endDate);
+    @Query(value = "{$and:[{'accountNumber': ?0},{ 'createdDate' : {$gte : ?1, $lte: ?2 }}]}")
+    Optional<List<Statement>> findByAccountNumberAndCreatedDateBetween(String accountNumber, Instant startDate, Instant endDate);
 }
