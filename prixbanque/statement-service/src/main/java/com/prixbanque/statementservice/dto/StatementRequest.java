@@ -1,5 +1,6 @@
-package com.prixbanque.transferservice.dto;
+package com.prixbanque.statementservice.dto;
 
+import com.prixbanque.statementservice.model.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +12,9 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransferRequest {
+public class StatementRequest {
     private String accountNumber;
-    private String recipientsEmail;
+    private String recepientsAccountNumber;
     private BigDecimal amount;
+    private TransactionType transactionType;
 }

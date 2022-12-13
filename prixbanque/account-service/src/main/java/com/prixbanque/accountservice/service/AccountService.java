@@ -7,6 +7,7 @@ import com.prixbanque.accountservice.dto.TransferRequest;
 import com.prixbanque.accountservice.event.NotificationPlacedEvent;
 import com.prixbanque.accountservice.model.Account;
 import com.prixbanque.accountservice.model.Customer;
+import com.prixbanque.accountservice.model.NotificationType;
 import com.prixbanque.accountservice.repository.AccountRepository;
 import com.prixbanque.accountservice.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +59,7 @@ public class AccountService {
                         account.getCustomer().getEmail(),
                         null,
                         null,
-                        "account")
+                        NotificationType.ACCOUNT)
         );
 
         log.info("Account {} is saved", account.getAccountNumber());
@@ -107,18 +108,18 @@ public class AccountService {
     public Boolean deposit(TransactionRequest transactionRequest) {
         Account account = getAccount(transactionRequest.getAccountNumber());
 
-        account.setBalance(account.getBalance().add(transactionRequest.getValue()));
+        account.setBalance(account.getBalance().add(transactionRequest.getAmount()));
         accountRepository.save(account);
         return true;
     }
 
     public Boolean withdraw(TransactionRequest transactionRequest) {
         Account account = getAccount(transactionRequest.getAccountNumber());
-        if (account.getBalance().compareTo(transactionRequest.getValue()) < 0) {
+        if (account.getBalance().compareTo(transactionRequest.getAmount()) < 0) {
             return false;
         }
 
-        account.setBalance(account.getBalance().subtract(transactionRequest.getValue()));
+        account.setBalance(account.getBalance().subtract(transactionRequest.getAmount()));
         accountRepository.save(account);
         return true;
     }
@@ -135,8 +136,8 @@ public class AccountService {
             return false;
         }
 
-        if(withdraw(new TransactionRequest(account.get().getAccountNumber(), transferRequest.getValue()))) {
-             if(deposit(new TransactionRequest(recipientCustomer.get().getAccount().getAccountNumber(), transferRequest.getValue()))) {
+        if(withdraw(new TransactionRequest(account.get().getAccountNumber(), transferRequest.getAmount()))) {
+             if(deposit(new TransactionRequest(recipientCustomer.get().getAccount().getAccountNumber(), transferRequest.getAmount()))) {
                  return true;
              }
         }

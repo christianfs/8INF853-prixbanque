@@ -4,6 +4,7 @@ import com.prixbanque.transferservice.dto.AccountResponse;
 import com.prixbanque.transferservice.dto.TransferRequest;
 import com.prixbanque.transferservice.dto.TransferResponse;
 import com.prixbanque.transferservice.event.NotificationPlacedEvent;
+import com.prixbanque.transferservice.model.NotificationType;
 import com.prixbanque.transferservice.model.Transfer;
 import com.prixbanque.transferservice.repository.TransferRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class TransferService {
         Transfer transfer = Transfer.builder()
                 .recipientsEmail(transferRequest.getRecipientsEmail())
                 .accountNumber(transferRequest.getAccountNumber())
-                .value(transferRequest.getValue())
+                .value(transferRequest.getAmount())
                 .confirmationKey(UUID.randomUUID())
                 .transferCompleted(false)
                 .build();
@@ -53,7 +54,7 @@ public class TransferService {
                             transfer.getRecipientsEmail(),
                             transfer.getConfirmationKey(),
                             transfer.getValue(),
-                            "transfer")
+                            NotificationType.TRANSFER)
             );
             log.info("Account Transfer {} is created", transfer.getAccountNumber());
         }
@@ -91,7 +92,7 @@ public class TransferService {
         return false;
     }
 
-    public List<TransferResponse> getAllTransfersByAccountNumber(String accountNumber) {
+    public List<TransferResponse> getTransfersByAccountNumber(String accountNumber) {
         Optional<List<Transfer>> optionalTransfers = transferRepository.findByAccountNumber(accountNumber);
 
         if(optionalTransfers.get().isEmpty()) {
@@ -109,7 +110,7 @@ public class TransferService {
                 .accountNumber(transfer.getAccountNumber())
                 .recipientsEmail(transfer.getRecipientsEmail())
                 .transferCompleted(transfer.getTransferCompleted())
-                .value(transfer.getValue())
+                .amount(transfer.getValue())
                 .createdDate(transfer.getCreatedDate())
                 .lastModifiedDate(transfer.getLastModifiedDate())
                 .build();

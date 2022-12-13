@@ -31,7 +31,7 @@ public class TransferController {
 
     @GetMapping(path = "/account/{accountNumber}")
     @ResponseStatus(HttpStatus.OK)
-    public List<TransferResponse> getAllTransfersByAccountNumber(@PathVariable String accountNumber) {
-        return transferService.getAllTransfersByAccountNumber(accountNumber);
+    public List<TransferResponse> getTransfersByAccountNumber(@PathVariable String accountNumber) {
+        return transferService.getTransfersByAccountNumber(accountNumber);
     }
 }

@@ -16,6 +16,6 @@ public class NotificationPlacedEvent {
     private String accountNumber;
     private String recipientsEmail;
     private UUID confirmationKey;
-    private BigDecimal value;
+    private BigDecimal amount;
     private String type;
 }

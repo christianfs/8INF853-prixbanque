@@ -77,7 +77,7 @@ public class TransferServiceApplicationTests {
         return TransferRequest.builder()
                 .accountNumber("67453-21")
                 .recipientsEmail("recipient2@email.com")
-                .value(BigDecimal.valueOf(50000))
+                .amount(BigDecimal.valueOf(50000))
                 .build();
     }
 }

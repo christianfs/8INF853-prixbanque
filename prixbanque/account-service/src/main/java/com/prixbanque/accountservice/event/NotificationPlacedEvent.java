@@ -1,5 +1,6 @@
 package com.prixbanque.accountservice.event;
 
+import com.prixbanque.accountservice.model.NotificationType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,6 @@ public class NotificationPlacedEvent {
     private String accountNumber;
     private String recipientsEmail;
     private UUID confirmationKey;
-    private BigDecimal value;
-    private String type;
+    private BigDecimal amount;
+    private NotificationType notificationType;
 }

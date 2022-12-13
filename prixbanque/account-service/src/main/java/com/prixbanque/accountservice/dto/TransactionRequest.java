@@ -11,5 +11,5 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class TransactionRequest {
     private String accountNumber;
-    private BigDecimal value;
+    private BigDecimal amount;
 }

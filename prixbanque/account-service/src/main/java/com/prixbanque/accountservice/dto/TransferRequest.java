@@ -13,5 +13,5 @@ public class TransferRequest {
 
     private String accountNumber;
     private String recipientsEmail;
-    private BigDecimal value;
+    private BigDecimal amount;
 }

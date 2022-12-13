@@ -22,6 +22,6 @@ public class NotificationServiceApplication {
                 notificationPlacedEvent.getAccountNumber(),
                 notificationPlacedEvent.getRecipientsEmail(),
                 notificationPlacedEvent.getConfirmationKey(),
-                notificationPlacedEvent.getValue());
+                notificationPlacedEvent.getAmount());
     }
 }
