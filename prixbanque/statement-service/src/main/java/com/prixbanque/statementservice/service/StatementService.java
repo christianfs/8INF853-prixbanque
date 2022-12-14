@@ -26,7 +26,7 @@ public class StatementService {
         Statement statement = Statement.builder()
                 .accountNumber(statementRequest.getAccountNumber())
                 .amount(statementRequest.getAmount())
-                .recepientsAccountNumber(statementRequest.getRecepientsAccountNumber())
+                .recipientsAccountNumber(statementRequest.getRecipientsAccountNumber())
                 .transactionType(statementRequest.getTransactionType())
                 .build();
 
@@ -63,7 +63,7 @@ public class StatementService {
     private StatementResponse mapToStatementResponse(Statement statement) {
         return StatementResponse.builder()
                 .accountNumber(statement.getAccountNumber())
-                .recepientsAccountNumber(statement.getRecepientsAccountNumber())
+                .recipientsAccountNumber(statement.getRecipientsAccountNumber())
                 .amount(statement.getAmount())
                 .transactionType(statement.getTransactionType())
                 .createdDate(statement.getCreatedDate())

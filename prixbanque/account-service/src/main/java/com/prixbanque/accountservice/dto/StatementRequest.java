@@ -1,4 +1,4 @@
-package com.prixbanque.statementservice.dto;
+package com.prixbanque.accountservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,11 +1,9 @@
 package com.prixbanque.statementservice.dto;
 
-import com.prixbanque.statementservice.model.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -16,7 +14,7 @@ import java.time.Instant;
 @NoArgsConstructor
 public class StatementResponse {
     private String accountNumber;
-    private String recepientsAccountNumber;
+    private String recipientsAccountNumber;
     private BigDecimal amount;
     private TransactionType transactionType;
     private Instant createdDate;

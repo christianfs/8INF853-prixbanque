@@ -1,6 +1,6 @@
 package com.prixbanque.transferservice.event;
 
-import com.prixbanque.transferservice.model.NotificationType;
+import com.prixbanque.transferservice.dto.NotificationType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

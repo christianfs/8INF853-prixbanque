@@ -1,9 +1,6 @@
 package com.prixbanque.accountservice.service;
 
-import com.prixbanque.accountservice.dto.AccountRequest;
-import com.prixbanque.accountservice.dto.AccountResponse;
-import com.prixbanque.accountservice.dto.TransactionRequest;
-import com.prixbanque.accountservice.dto.TransferRequest;
+import com.prixbanque.accountservice.dto.*;
 import com.prixbanque.accountservice.event.NotificationPlacedEvent;
 import com.prixbanque.accountservice.model.Account;
 import com.prixbanque.accountservice.model.Customer;
@@ -15,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,6 +27,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
     private final KafkaTemplate<String, NotificationPlacedEvent> kafkaTemplate;
+    private final WebClient.Builder webClientBuilder;
 
     @Transactional
     public void createAccount(AccountRequest accountRequest){
@@ -110,6 +109,12 @@ public class AccountService {
 
         account.setBalance(account.getBalance().add(transactionRequest.getAmount()));
         accountRepository.save(account);
+        saveInStatementService(
+                account.getAccountNumber(),
+                null,
+                transactionRequest.getAmount(),
+                TransactionType.DEPOSIT
+        );
         return true;
     }
 
@@ -121,6 +126,12 @@ public class AccountService {
 
         account.setBalance(account.getBalance().subtract(transactionRequest.getAmount()));
         accountRepository.save(account);
+        saveInStatementService(
+                account.getAccountNumber(),
+                null,
+                transactionRequest.getAmount(),
+                TransactionType.WITHDRAW
+        );
         return true;
     }
 
@@ -138,10 +149,29 @@ public class AccountService {
 
         if(withdraw(new TransactionRequest(account.get().getAccountNumber(), transferRequest.getAmount()))) {
              if(deposit(new TransactionRequest(recipientCustomer.get().getAccount().getAccountNumber(), transferRequest.getAmount()))) {
+                 saveInStatementService(
+                         account.get().getAccountNumber(),
+                         recipientCustomer.get().getAccount().getAccountNumber(),
+                         transferRequest.getAmount(),
+                         TransactionType.TRANSFER
+                 );
                  return true;
              }
         }
-
         return false;
+    }
+
+    private Boolean saveInStatementService(String accountNumber, String recepientsAccountNumber, BigDecimal amount, TransactionType transactionType) {
+        return webClientBuilder.build().put()
+                .uri("http://statement-service/api/statement")
+                .bodyValue(new StatementRequest(
+                        accountNumber,
+                        recepientsAccountNumber,
+                        amount,
+                        transactionType)
+                )
+                .retrieve()
+                .bodyToMono(Boolean.class)
+                .block();
     }
 }

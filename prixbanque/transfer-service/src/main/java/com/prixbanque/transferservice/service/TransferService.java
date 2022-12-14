@@ -4,7 +4,7 @@ import com.prixbanque.transferservice.dto.AccountResponse;
 import com.prixbanque.transferservice.dto.TransferRequest;
 import com.prixbanque.transferservice.dto.TransferResponse;
 import com.prixbanque.transferservice.event.NotificationPlacedEvent;
-import com.prixbanque.transferservice.model.NotificationType;
+import com.prixbanque.transferservice.dto.NotificationType;
 import com.prixbanque.transferservice.model.Transfer;
 import com.prixbanque.transferservice.repository.TransferRepository;
 import lombok.RequiredArgsConstructor;

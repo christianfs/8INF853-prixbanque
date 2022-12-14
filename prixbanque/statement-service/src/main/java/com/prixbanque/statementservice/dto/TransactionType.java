@@ -1,4 +1,4 @@
-package com.prixbanque.statementservice.model;
+package com.prixbanque.statementservice.dto;
 
 public enum TransactionType {
     TRANSFER,

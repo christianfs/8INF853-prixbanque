@@ -1,4 +1,4 @@
-package com.prixbanque.transferservice.model;
+package com.prixbanque.transferservice.dto;
 
 public enum NotificationType {
     ACCOUNT,
