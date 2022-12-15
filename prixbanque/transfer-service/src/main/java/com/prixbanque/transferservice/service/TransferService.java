@@ -71,7 +71,7 @@ public class TransferService {
 
         Transfer transfer = optionalTransfer.get();
 
-        if(transfer.getTransferCompleted()) {
+        if(Boolean.TRUE.equals(transfer.getTransferCompleted())) {
             return null;
         }
 
@@ -88,7 +88,7 @@ public class TransferService {
         }
 
         return optionalTransfers.get().stream()
-                .map(transfer -> mapToTransferResponse(transfer))
+                .map(this::mapToTransferResponse)
                 .collect(Collectors.toList());
     }
 
@@ -99,6 +99,7 @@ public class TransferService {
                 .recipientsEmail(transfer.getRecipientsEmail())
                 .transferCompleted(transfer.getTransferCompleted())
                 .amount(transfer.getAmount())
+                .transferId(transfer.getTransferId())
                 .createdDate(transfer.getCreatedDate())
                 .lastModifiedDate(transfer.getLastModifiedDate())
                 .build();

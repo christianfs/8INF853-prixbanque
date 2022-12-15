@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -18,6 +19,7 @@ public class TransferResponse {
     private String recipientsEmail;
     private BigDecimal amount;
     private Boolean transferCompleted;
+    private UUID transferId;
     private Instant createdDate;
     private Instant lastModifiedDate;
 }

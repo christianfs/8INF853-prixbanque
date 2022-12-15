@@ -101,12 +101,16 @@ public class AccountService {
 
     private String generateAccountNumber(Integer size, Integer min, Integer max) {
         return new Random().ints(size, min, max + 1)
-                .mapToObj(i -> Integer.toString(i))
+                .mapToObj(Integer::toString)
                 .collect(Collectors.joining());
     }
 
     public Boolean deposit(TransactionRequest transactionRequest) {
         Account account = getAccount(transactionRequest.getAccountNumber());
+
+        if (account == null) {
+            return false;
+        }
 
         account.setBalance(account.getBalance().add(transactionRequest.getAmount()));
         accountRepository.save(account);
@@ -114,14 +118,15 @@ public class AccountService {
                 account.getAccountNumber(),
                 null,
                 transactionRequest.getAmount(),
-                TransactionType.DEPOSIT
+                TransactionType.DEPOSIT,
+                transactionRequest.getTransferId()
         );
         return true;
     }
 
     public Boolean withdraw(TransactionRequest transactionRequest) {
         Account account = getAccount(transactionRequest.getAccountNumber());
-        if (account.getBalance().compareTo(transactionRequest.getAmount()) < 0) {
+        if (account == null || account.getBalance().compareTo(transactionRequest.getAmount()) < 0) {
             return false;
         }
 
@@ -131,7 +136,8 @@ public class AccountService {
                 account.getAccountNumber(),
                 null,
                 transactionRequest.getAmount(),
-                TransactionType.WITHDRAW
+                TransactionType.WITHDRAW,
+                transactionRequest.getTransferId()
         );
         return true;
     }
@@ -159,28 +165,34 @@ public class AccountService {
             return false;
         }
 
-        if(withdraw(new TransactionRequest(account.get().getAccountNumber(), transferResponse.getAmount()))) {
-             if(deposit(new TransactionRequest(recipientCustomer.get().getAccount().getAccountNumber(), transferResponse.getAmount()))) {
-                 saveInStatementService(
-                         account.get().getAccountNumber(),
-                         recipientCustomer.get().getAccount().getAccountNumber(),
-                         transferResponse.getAmount(),
-                         TransactionType.TRANSFER
-                 );
-                 return true;
-             }
+        if(Boolean.TRUE.equals(withdraw(new TransactionRequest(account.get().getAccountNumber(), transferResponse.getAmount(), transferResponse.getTransferId()))) &&
+                Boolean.TRUE.equals(deposit(new TransactionRequest(recipientCustomer.get().getAccount().getAccountNumber(), transferResponse.getAmount(), transferResponse.getTransferId())))) {
+             saveInStatementService(
+                     account.get().getAccountNumber(),
+                     recipientCustomer.get().getAccount().getAccountNumber(),
+                     transferResponse.getAmount(),
+                     TransactionType.TRANSFER,
+                     transferResponse.getTransferId()
+             );
+             return true;
         }
         return false;
     }
 
-    private Boolean saveInStatementService(String accountNumber, String recepientsAccountNumber, BigDecimal amount, TransactionType transactionType) {
+    private Boolean saveInStatementService(String accountNumber,
+                                           String recepientsAccountNumber,
+                                           BigDecimal amount,
+                                           TransactionType transactionType,
+                                           UUID transferId) {
         return webClientBuilder.build().post()
                 .uri("http://statement-service/api/statement")
                 .bodyValue(new StatementRequest(
                         accountNumber,
                         recepientsAccountNumber,
                         amount,
-                        transactionType)
+                        transactionType,
+                        transferId
+                        )
                 )
                 .retrieve()
                 .bodyToMono(Boolean.class)

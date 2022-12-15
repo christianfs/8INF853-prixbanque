@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -17,5 +18,6 @@ public class StatementResponse {
     private String recipientsAccountNumber;
     private BigDecimal amount;
     private TransactionType transactionType;
+    private UUID transferId;
     private Instant createdDate;
 }

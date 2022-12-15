@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Document(value="statementBalance")
 @AllArgsConstructor
@@ -24,6 +25,7 @@ public class Statement {
     private String recipientsAccountNumber;
     private BigDecimal amount;
     private TransactionType transactionType;
+    private UUID transferId;
     @CreatedDate
     private Instant createdDate;
 }

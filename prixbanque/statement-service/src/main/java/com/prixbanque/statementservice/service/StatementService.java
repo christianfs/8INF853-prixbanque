@@ -28,6 +28,7 @@ public class StatementService {
                 .amount(statementRequest.getAmount())
                 .recipientsAccountNumber(statementRequest.getRecipientsAccountNumber())
                 .transactionType(statementRequest.getTransactionType())
+                .transferId(statementRequest.getTransferId())
                 .build();
 
         statementRepository.save(statement);
@@ -35,7 +36,7 @@ public class StatementService {
 
     public List<StatementResponse> getStatementsByAccountNumberAndDates(String accountNumber, String startDate, String endDate) throws ParseException {
 
-        if(endDate.equals(null) || endDate.isEmpty()) {
+        if(endDate == null || endDate.isEmpty()) {
             endDate = startDate;
         }
 
@@ -51,7 +52,7 @@ public class StatementService {
         }
 
         return optionalStatements.get().stream()
-                .map(statement -> mapToStatementResponse(statement))
+                .map(this::mapToStatementResponse)
                 .collect(Collectors.toList());
     }
 
@@ -66,6 +67,7 @@ public class StatementService {
                 .recipientsAccountNumber(statement.getRecipientsAccountNumber())
                 .amount(statement.getAmount())
                 .transactionType(statement.getTransactionType())
+                .transferId(statement.getTransferId())
                 .createdDate(statement.getCreatedDate())
                 .build();
     }

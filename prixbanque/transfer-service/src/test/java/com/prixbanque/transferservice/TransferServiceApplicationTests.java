@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Testcontainers
 @AutoConfigureMockMvc
-public class TransferServiceApplicationTests {
+class TransferServiceApplicationTests {
 
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.4.2");
@@ -43,7 +43,7 @@ public class TransferServiceApplicationTests {
     }
 
     @Test
-    public void shouldCreateTransfer() throws Exception {
+    void shouldCreateTransfer() throws Exception {
         TransferRequest transferRequest = getTransferRequest();
         String transferRequestString = objectMapper.writeValueAsString(transferRequest);
         mockMvc.perform(MockMvcRequestBuilders.post("/api/transfer")
@@ -54,7 +54,7 @@ public class TransferServiceApplicationTests {
     }
 
     @Test
-    public void shouldGetTransfer() throws Exception {
+    void shouldGetTransfer() throws Exception {
         Transfer transfer = getTransfer();
         transferRepository.save(transfer);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/transfer")
