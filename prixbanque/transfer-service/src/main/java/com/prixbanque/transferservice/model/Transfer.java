@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
@@ -23,8 +24,9 @@ public class Transfer {
     private String id;
     private String accountNumber;
     private String recipientsEmail;
-    private UUID confirmationKey;
-    private BigDecimal value;
+    @Indexed(unique = true)
+    private UUID transferId;
+    private BigDecimal amount;
     private Boolean transferCompleted;
     @CreatedDate
     private Instant createdDate;

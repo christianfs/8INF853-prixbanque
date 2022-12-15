@@ -8,7 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TransferRepository extends MongoRepository<Transfer, String> {
-    Optional<Transfer> findByConfirmationKeyAndRecipientsEmail(UUID confirmationKey, String recipientsEmail);
 
     Optional<List<Transfer>> findByAccountNumber(String accountNumber);
+
+    Optional<Transfer> findByTransferId(UUID transferId);
 }

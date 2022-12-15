@@ -27,16 +27,16 @@ public class TransferService {
     private final KafkaTemplate<String, NotificationPlacedEvent> kafkaTemplate;
     private final WebClient.Builder webClientBuilder;
 
-    public void createTransfer(TransferRequest transferRequest) {
+    public Boolean createTransfer(TransferRequest transferRequest) {
         Transfer transfer = Transfer.builder()
                 .recipientsEmail(transferRequest.getRecipientsEmail())
                 .accountNumber(transferRequest.getAccountNumber())
-                .value(transferRequest.getAmount())
-                .confirmationKey(UUID.randomUUID())
+                .amount(transferRequest.getAmount())
+                .transferId(UUID.randomUUID())
                 .transferCompleted(false)
                 .build();
 
-        AccountResponse result = webClientBuilder.build().get()
+        AccountResponse accountResponse = webClientBuilder.build().get()
                 .uri("http://account-service/api/account",
                         uriBuilder -> uriBuilder.path("/{accountNumber}")
                         .build(transfer.getAccountNumber()))
@@ -44,7 +44,7 @@ public class TransferService {
                 .bodyToMono(AccountResponse.class)
                 .block();
 
-        if(result != null) {
+        if(accountResponse != null && accountResponse.getBalance().compareTo(transfer.getAmount()) >= 0) {
             transferRepository.save(transfer);
             kafkaTemplate.send("notificationTopic",
                     new NotificationPlacedEvent(
@@ -52,44 +52,32 @@ public class TransferService {
                             "",
                             transfer.getAccountNumber(),
                             transfer.getRecipientsEmail(),
-                            transfer.getConfirmationKey(),
-                            transfer.getValue(),
+                            transfer.getTransferId(),
+                            transfer.getAmount(),
                             NotificationType.TRANSFER)
             );
             log.info("Account Transfer {} is created", transfer.getAccountNumber());
+            return true;
         }
+        return false;
     }
 
-    public Boolean commitTransfer(UUID confirmationKey, String recipientsEmail) {
-        Optional<Transfer> optionalTransfer = transferRepository.findByConfirmationKeyAndRecipientsEmail(confirmationKey, recipientsEmail);
+    public TransferResponse commitTransfer(UUID transferId) {
+        Optional<Transfer> optionalTransfer = transferRepository.findByTransferId(transferId);
 
         if(optionalTransfer.isEmpty()) {
-            return false;
+            return null;
         }
 
         Transfer transfer = optionalTransfer.get();
 
         if(transfer.getTransferCompleted()) {
-            return false;
+            return null;
         }
 
-        Boolean result = webClientBuilder.build().put()
-                .uri("http://account-service/api/account/transfer")
-                .bodyValue(new TransferRequest(
-                        transfer.getAccountNumber(),
-                        transfer.getRecipientsEmail(),
-                        transfer.getValue())
-                )
-                .retrieve()
-                .bodyToMono(Boolean.class)
-                .block();
-
-        if(result) {
-            transfer.setTransferCompleted(true);
-            transferRepository.save(transfer);
-            return true;
-        }
-        return false;
+        transfer.setTransferCompleted(true);
+        transferRepository.save(transfer);
+        return mapToTransferResponse(transfer);
     }
 
     public List<TransferResponse> getTransfersByAccountNumber(String accountNumber) {
@@ -110,7 +98,7 @@ public class TransferService {
                 .accountNumber(transfer.getAccountNumber())
                 .recipientsEmail(transfer.getRecipientsEmail())
                 .transferCompleted(transfer.getTransferCompleted())
-                .amount(transfer.getValue())
+                .amount(transfer.getAmount())
                 .createdDate(transfer.getCreatedDate())
                 .lastModifiedDate(transfer.getLastModifiedDate())
                 .build();

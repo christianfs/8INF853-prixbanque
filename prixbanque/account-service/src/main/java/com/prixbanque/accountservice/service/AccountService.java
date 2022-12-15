@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -136,23 +137,34 @@ public class AccountService {
     }
 
     @Transactional
-    public Boolean transfer(TransferRequest transferRequest) {
-        Optional<Customer> recipientCustomer = customerRepository.findByEmail(transferRequest.getRecipientsEmail());
+    public Boolean transfer(UUID transferId) {
+
+        TransferResponse transferResponse = webClientBuilder.build().put()
+                .uri("http://transfer-service/api/transfer/commit",
+                        uriBuilder -> uriBuilder.queryParam("transferId", transferId).build())
+                .retrieve()
+                .bodyToMono(TransferResponse.class)
+                .block();
+        if(transferResponse == null) {
+            return false;
+        }
+
+        Optional<Customer> recipientCustomer = customerRepository.findByEmail(transferResponse.getRecipientsEmail());
         if(recipientCustomer.isEmpty()) {
             return false;
         }
 
-        Optional<Account> account = accountRepository.findByAccountNumber(transferRequest.getAccountNumber());
+        Optional<Account> account = accountRepository.findByAccountNumber(transferResponse.getAccountNumber());
         if(account.isEmpty()) {
             return false;
         }
 
-        if(withdraw(new TransactionRequest(account.get().getAccountNumber(), transferRequest.getAmount()))) {
-             if(deposit(new TransactionRequest(recipientCustomer.get().getAccount().getAccountNumber(), transferRequest.getAmount()))) {
+        if(withdraw(new TransactionRequest(account.get().getAccountNumber(), transferResponse.getAmount()))) {
+             if(deposit(new TransactionRequest(recipientCustomer.get().getAccount().getAccountNumber(), transferResponse.getAmount()))) {
                  saveInStatementService(
                          account.get().getAccountNumber(),
                          recipientCustomer.get().getAccount().getAccountNumber(),
-                         transferRequest.getAmount(),
+                         transferResponse.getAmount(),
                          TransactionType.TRANSFER
                  );
                  return true;
@@ -162,7 +174,7 @@ public class AccountService {
     }
 
     private Boolean saveInStatementService(String accountNumber, String recepientsAccountNumber, BigDecimal amount, TransactionType transactionType) {
-        return webClientBuilder.build().put()
+        return webClientBuilder.build().post()
                 .uri("http://statement-service/api/statement")
                 .bodyValue(new StatementRequest(
                         accountNumber,

@@ -16,7 +16,7 @@ public class NotificationPlacedEvent {
     private String fullName;
     private String accountNumber;
     private String recipientsEmail;
-    private UUID confirmationKey;
+    private UUID transferId;
     private BigDecimal amount;
-    private NotificationType notificationType;
+    private NotificationType type;
 }

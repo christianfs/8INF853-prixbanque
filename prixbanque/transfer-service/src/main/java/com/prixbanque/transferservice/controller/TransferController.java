@@ -19,14 +19,14 @@ public class TransferController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createTransfer(@RequestBody TransferRequest transferRequest) {
-        transferService.createTransfer(transferRequest);
+    public Boolean createTransfer(@RequestBody TransferRequest transferRequest) {
+        return transferService.createTransfer(transferRequest);
     }
 
     @PutMapping(path = "/commit")
     @ResponseStatus(HttpStatus.OK)
-    public Boolean commitTransfer(@RequestParam(name = "confirmationKey") UUID confirmationKey, @RequestParam(name = "recipientsEmail") String recipientsEmail) {
-        return transferService.commitTransfer(confirmationKey, recipientsEmail);
+    public TransferResponse commitTransfer(@RequestParam(name = "transferId") UUID transferId) {
+        return transferService.commitTransfer(transferId);
     }
 
     @GetMapping(path = "/account/{accountNumber}")

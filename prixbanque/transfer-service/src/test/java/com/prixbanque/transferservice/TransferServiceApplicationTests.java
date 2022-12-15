@@ -58,18 +58,18 @@ public class TransferServiceApplicationTests {
         Transfer transfer = getTransfer();
         transferRepository.save(transfer);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/transfer")
-                        .param("key", transfer.getConfirmationKey().toString())
+                        .param("key", transfer.getTransferId().toString())
                         .param("email", transfer.getRecipientsEmail()))
                 .andExpect(status().isOk());
     }
 
     private static Transfer getTransfer() {
         return Transfer.builder()
-                .value(BigDecimal.valueOf(3000))
+                .amount(BigDecimal.valueOf(3000))
                 .recipientsEmail("recipient@email.com")
                 .accountNumber("12345-67")
                 .transferCompleted(false)
-                .confirmationKey(UUID.randomUUID())
+                .transferId(UUID.randomUUID())
                 .build();
     }
 

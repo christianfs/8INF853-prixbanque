@@ -3,13 +3,13 @@ package com.prixbanque.accountservice.controller;
 import com.prixbanque.accountservice.dto.AccountRequest;
 import com.prixbanque.accountservice.dto.AccountResponse;
 import com.prixbanque.accountservice.dto.TransactionRequest;
-import com.prixbanque.accountservice.dto.TransferRequest;
 import com.prixbanque.accountservice.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/account")
@@ -47,9 +47,9 @@ public class AccountController {
         return accountService.withdraw(transactionRequest);
     }
 
-    @PutMapping(path = "/transfer")
+    @PutMapping(path = "/transfer/{transferId}")
     @ResponseStatus(HttpStatus.OK)
-    public Boolean transfer(@RequestBody TransferRequest transferRequest){
-        return accountService.transfer(transferRequest);
+    public Boolean transfer(@PathVariable UUID transferId){
+        return accountService.transfer(transferId);
     }
 }
