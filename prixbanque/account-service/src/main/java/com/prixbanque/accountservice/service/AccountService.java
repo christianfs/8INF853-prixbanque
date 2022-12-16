@@ -31,7 +31,7 @@ public class AccountService {
     private final WebClient.Builder webClientBuilder;
 
     @Transactional
-    public void createAccount(AccountRequest accountRequest){
+    public String createAccount(AccountRequest accountRequest){
         Customer customer = Customer.builder()
                 .firstName(accountRequest.getFirstName())
                 .lastName(accountRequest.getLastName())
@@ -62,7 +62,9 @@ public class AccountService {
                         NotificationType.ACCOUNT)
         );
 
-        log.info("Account {} is saved", account.getAccountNumber());
+        String message = "Account " + account.getAccountNumber() + " is saved.";
+        log.info(message);
+        return message;
     }
 
     public AccountResponse getAccountByAccountNumber(String accountNumber) {
@@ -109,6 +111,7 @@ public class AccountService {
         Account account = getAccount(transactionRequest.getAccountNumber());
 
         if (account == null) {
+            log.info("Unable to make deposit, account {} not found.", transactionRequest.getAccountNumber());
             return false;
         }
 
@@ -121,12 +124,19 @@ public class AccountService {
                 TransactionType.DEPOSIT,
                 transactionRequest.getTransferId()
         );
+        log.info("Deposit made successfully to the account {}", account.getAccountNumber());
         return true;
     }
 
     public Boolean withdraw(TransactionRequest transactionRequest) {
         Account account = getAccount(transactionRequest.getAccountNumber());
-        if (account == null || account.getBalance().compareTo(transactionRequest.getAmount()) < 0) {
+        if (account == null) {
+            log.info("Account {} does not exist.", transactionRequest.getAccountNumber());
+            return false;
+        }
+
+        if (account.getBalance().compareTo(transactionRequest.getAmount()) < 0) {
+            log.info("There are not enough funds to withdraw from the account {}. Your current balance is {}", account.getAccountNumber(), account.getBalance());
             return false;
         }
 
@@ -139,12 +149,12 @@ public class AccountService {
                 TransactionType.WITHDRAW,
                 transactionRequest.getTransferId()
         );
+        log.info("Withdrawal made successfully from the account {}", account.getAccountNumber());
         return true;
     }
 
     @Transactional
     public Boolean transfer(UUID transferId) {
-
         TransferResponse transferResponse = webClientBuilder.build().put()
                 .uri("http://transfer-service/api/transfer/commit",
                         uriBuilder -> uriBuilder.queryParam("transferId", transferId).build())
@@ -152,16 +162,19 @@ public class AccountService {
                 .bodyToMono(TransferResponse.class)
                 .block();
         if(transferResponse == null) {
+            log.info("No data found to perform the transfer. Transfer id {}", transferId);
             return false;
         }
 
         Optional<Customer> recipientCustomer = customerRepository.findByEmail(transferResponse.getRecipientsEmail());
         if(recipientCustomer.isEmpty()) {
+            log.info("Recipient account not found for email {}", transferResponse.getRecipientsEmail());
             return false;
         }
 
         Optional<Account> account = accountRepository.findByAccountNumber(transferResponse.getAccountNumber());
         if(account.isEmpty()) {
+            log.info("Source account not found. Account number {}", transferResponse.getAccountNumber());
             return false;
         }
 
@@ -174,8 +187,10 @@ public class AccountService {
                      TransactionType.TRANSFER,
                      transferResponse.getTransferId()
              );
-             return true;
+            log.info("Transfer of {} successfully made from account {} to account {}", transferResponse.getAmount(), account.get().getAccountNumber(), recipientCustomer.get().getAccount().getAccountNumber());
+            return true;
         }
+        log.info("The transfer of {} failed from account {} to account {}. Please contact the sender or your bank.", transferResponse.getAmount(), account.get().getAccountNumber(), recipientCustomer.get().getAccount().getAccountNumber());
         return false;
     }
 

@@ -19,8 +19,8 @@ public class StatementController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createStatement(@RequestBody StatementRequest statementRequest) {
-        statementService.createStatement(statementRequest);
+    public Boolean createStatement(@RequestBody StatementRequest statementRequest) {
+        return statementService.createStatement(statementRequest);
     }
 
     @GetMapping
