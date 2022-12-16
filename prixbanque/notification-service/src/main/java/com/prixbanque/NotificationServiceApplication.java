@@ -18,7 +18,7 @@ public class NotificationServiceApplication {
     public void handleNotification(NotificationPlacedEvent notificationPlacedEvent) {
         // send out an email notification
         if(notificationPlacedEvent.getType().equals(NotificationType.TRANSFER)) {
-            log.info("http://localhost:8080/api/account/transfer/" + notificationPlacedEvent.getTransferId());
+            log.info("http://localhost:8181/api/account/transfer/" + notificationPlacedEvent.getTransferId());
         } else {
             log.info("New account created " + notificationPlacedEvent.toString());
         }

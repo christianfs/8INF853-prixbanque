@@ -138,4 +138,9 @@ buildNumber.properties
 #Sonar generated dir
 /.sonar/
 
+### My SQL Host Data ###
+mongo-data
+/postgres/
+/postgres-account/
+
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij+all,maven,sonar

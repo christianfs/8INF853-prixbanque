@@ -1,6 +1,33 @@
 ---
 version: '3'
 services:
+  ## Postgres Docker Compose Config
+  postgres-account:
+    container_name: postgres-account
+    image: postgres
+    environment:
+      POSTGRES_DB: account-service
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-account:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  ## Mongo Docker Compose Config
+  mongo:
+    container_name: mongo
+    image: mongo:6.0.3-focal
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+    volumes:
+      - ./mongo-data:/data/db
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
     container_name: zookeeper
@@ -23,3 +50,80 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  ## Eureka Server
+  discovery-server:
+    image: csegovia/discovery-server:latest
+    container_name: discovery-server
+    pull_policy: always
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  api-gateway:
+    image: csegovia/api-gateway:latest
+    container_name: api-gateway
+    pull_policy: always
+    ports:
+      - "8181:8080"
+    expose:
+      - "8181"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=TRACE
+    depends_on:
+      - discovery-server
+
+  ## Transfer-Service Docker Compose Config
+  transfer-service:
+    container_name: transfer-service
+    image: csegovia/transfer-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/transfer-service
+    depends_on:
+      - mongo
+      - discovery-server
+      - broker
+      - api-gateway
+
+  ## Statement-Service Docker Compose Config
+  statement-service:
+    container_name: statement-service
+    image: csegovia/statement-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/statement-service
+    depends_on:
+      - mongo
+      - discovery-server
+      - api-gateway
+
+  ## Account-Service Docker Compose Config
+  account-service:
+    container_name: account-service
+    image: csegovia/account-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-account:5432/account-service
+    depends_on:
+      - postgres-account
+      - discovery-server
+      - broker
+      - api-gateway
+
+  ## Notification-Service Docker Compose Config
+  notification-service:
+    container_name: notification-service
+    image: csegovia/notification-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - broker
+      - discovery-server
+      - api-gateway
