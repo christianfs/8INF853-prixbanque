@@ -19,8 +19,8 @@ public class AccountController {
     private final AccountService accountService;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createAccount(@RequestBody AccountRequest accountRequest){
-        accountService.createAccount(accountRequest);
+    public String createAccount(@RequestBody AccountRequest accountRequest){
+        return accountService.createAccount(accountRequest);
     }
 
     @GetMapping

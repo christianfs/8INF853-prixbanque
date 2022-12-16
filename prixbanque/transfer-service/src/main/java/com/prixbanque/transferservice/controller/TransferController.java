@@ -18,7 +18,7 @@ public class TransferController {
     private final TransferService transferService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public String createTransfer(@RequestBody TransferRequest transferRequest) {
         return transferService.createTransfer(transferRequest);
     }

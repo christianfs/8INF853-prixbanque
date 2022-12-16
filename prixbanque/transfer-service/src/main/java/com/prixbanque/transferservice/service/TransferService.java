@@ -45,23 +45,30 @@ public class TransferService {
                 .bodyToMono(AccountResponse.class)
                 .block();
 
-        if(accountResponse != null && accountResponse.getBalance().compareTo(transfer.getAmount()) >= 0) {
-            transferRepository.save(transfer);
-            kafkaTemplate.send("notificationTopic",
-                    new NotificationPlacedEvent(
-                            transfer.getId(),
-                            "",
-                            transfer.getAccountNumber(),
-                            transfer.getRecipientsEmail(),
-                            transfer.getTransferId(),
-                            transfer.getAmount(),
-                            NotificationType.TRANSFER)
-            );
-            message = "The fund transfer id " + transfer.getTransferId() + " was sent to the recipient successfully. Wait for his answer to complete it.";
+        if (accountResponse == null) {
+            message = "Source account not found. Account number " + transfer.getAccountNumber();
             log.info(message);
             return message;
         }
-        message = "Funds transfer not completed, your balance is $" + accountResponse.getBalance().toString();
+
+        if(accountResponse.getBalance().compareTo(transfer.getAmount()) < 0) {
+            message = "Funds transfer not completed, your balance is $" + accountResponse.getBalance().toString();
+            log.info(message);
+            return message;
+        }
+
+        transferRepository.save(transfer);
+        kafkaTemplate.send("notificationTopic",
+                new NotificationPlacedEvent(
+                        transfer.getId(),
+                        "",
+                        transfer.getAccountNumber(),
+                        transfer.getRecipientsEmail(),
+                        transfer.getTransferId(),
+                        transfer.getAmount(),
+                        NotificationType.TRANSFER)
+        );
+        message = "The fund transfer id " + transfer.getTransferId() + " was sent to the recipient successfully. Wait for his answer to complete it.";
         log.info(message);
         return message;
     }

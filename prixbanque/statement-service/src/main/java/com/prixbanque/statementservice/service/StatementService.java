@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class StatementService {
 
     private final StatementRepository statementRepository;
-    public void createStatement(StatementRequest statementRequest) {
+    public Boolean createStatement(StatementRequest statementRequest) {
         Statement statement = Statement.builder()
                 .accountNumber(statementRequest.getAccountNumber())
                 .amount(statementRequest.getAmount())
@@ -32,6 +32,8 @@ public class StatementService {
                 .build();
 
         statementRepository.save(statement);
+        log.info("Statement {} was created successfully.", statement.getId());
+        return true;
     }
 
     public List<StatementResponse> getStatementsByAccountNumberAndDates(String accountNumber, String startDate, String endDate) throws ParseException {
