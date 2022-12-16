@@ -19,7 +19,7 @@ public class TransferController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Boolean createTransfer(@RequestBody TransferRequest transferRequest) {
+    public String createTransfer(@RequestBody TransferRequest transferRequest) {
         return transferService.createTransfer(transferRequest);
     }
 

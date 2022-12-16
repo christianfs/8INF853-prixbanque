@@ -27,7 +27,8 @@ public class TransferService {
     private final KafkaTemplate<String, NotificationPlacedEvent> kafkaTemplate;
     private final WebClient.Builder webClientBuilder;
 
-    public Boolean createTransfer(TransferRequest transferRequest) {
+    public String createTransfer(TransferRequest transferRequest) {
+        String message;
         Transfer transfer = Transfer.builder()
                 .recipientsEmail(transferRequest.getRecipientsEmail())
                 .accountNumber(transferRequest.getAccountNumber())
@@ -56,10 +57,13 @@ public class TransferService {
                             transfer.getAmount(),
                             NotificationType.TRANSFER)
             );
-            log.info("Account Transfer {} is created", transfer.getAccountNumber());
-            return true;
+            message = "The fund transfer id " + transfer.getTransferId() + " was sent to the recipient successfully. Wait for his answer to complete it.";
+            log.info(message);
+            return message;
         }
-        return false;
+        message = "Funds transfer not completed, your balance is $" + accountResponse.getBalance().toString();
+        log.info(message);
+        return message;
     }
 
     public TransferResponse commitTransfer(UUID transferId) {
