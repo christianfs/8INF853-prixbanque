@@ -1,4 +1,4 @@
-package com.prixbanque.statementservice.dto;
+package com.prixbanque.coreservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,17 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StatementResponse {
+public class StatementRequest {
     private String accountNumber;
     private BigDecimal amount;
     private TransactionType transactionType;
     private UUID transactionId;
-    private Instant createdDate;
 }

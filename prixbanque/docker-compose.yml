@@ -75,14 +75,14 @@ services:
     depends_on:
       - discovery-server
 
-  ## Transfer-Service Docker Compose Config
-  transfer-service:
-    container_name: transfer-service
-    image: csegovia/transfer-service:latest
+  ## Core-Service Docker Compose Config
+  core-service:
+    container_name: core-service
+    image: csegovia/core-service:latest
     pull_policy: always
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/transfer-service
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/core-service
     depends_on:
       - mongo
       - discovery-server

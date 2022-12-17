@@ -35,4 +35,10 @@ public class StatementController {
     public List<StatementResponse> getStatementsByAccountNumberAndDates(@PathVariable String accountNumber, @PathVariable String startDate, @PathVariable String endDate) throws ParseException {
         return statementService.getStatementsByAccountNumberAndDates(accountNumber, startDate, endDate);
     }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteAllStatements() {
+        statementService.deleteAllStatements();
+    }
 }

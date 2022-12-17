@@ -1,4 +1,4 @@
-package com.prixbanque.statementservice.dto;
+package com.prixbanque.coreservice.dto;
 
 public enum TransactionType {
     DEPOSIT,

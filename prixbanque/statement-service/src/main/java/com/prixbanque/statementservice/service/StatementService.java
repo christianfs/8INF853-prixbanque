@@ -26,9 +26,8 @@ public class StatementService {
         Statement statement = Statement.builder()
                 .accountNumber(statementRequest.getAccountNumber())
                 .amount(statementRequest.getAmount())
-                .recipientsAccountNumber(statementRequest.getRecipientsAccountNumber())
                 .transactionType(statementRequest.getTransactionType())
-                .transferId(statementRequest.getTransferId())
+                .transactionId(statementRequest.getTransactionId())
                 .build();
 
         statementRepository.save(statement);
@@ -66,11 +65,14 @@ public class StatementService {
     private StatementResponse mapToStatementResponse(Statement statement) {
         return StatementResponse.builder()
                 .accountNumber(statement.getAccountNumber())
-                .recipientsAccountNumber(statement.getRecipientsAccountNumber())
                 .amount(statement.getAmount())
                 .transactionType(statement.getTransactionType())
-                .transferId(statement.getTransferId())
+                .transactionId(statement.getTransactionId())
                 .createdDate(statement.getCreatedDate())
                 .build();
+    }
+
+    public void deleteAllStatements() {
+        statementRepository.deleteAll();
     }
 }

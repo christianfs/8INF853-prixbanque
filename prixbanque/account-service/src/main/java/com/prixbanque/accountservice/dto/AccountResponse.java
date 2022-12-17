@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.util.UUID;
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -19,5 +16,4 @@ public class AccountResponse {
     private String phone;
     private String address;
     private String accountNumber;
-    private BigDecimal balance;
 }
