@@ -32,16 +32,17 @@ _Below is an example of how you can instruct your audience on installing and set
 
 1. Create a free account at [docker hub](https://hub.docker.com/) and get your user name
 2. Clone the repo
-   ```sh
-   git clone git@github.com:christianfs/8INF853-prixbanque.git
-   ```
+  ```sh
+  git clone git@github.com:christianfs/8INF853-prixbanque.git
+  ```
 3. Set the environment variables
   ```
   POSTGRES_USER
   POSTGRES_PASSWORD
-  DOCKERHUB_USERACCOUNT
   ```
-4. Navigate to the prixbanque folder. Compile and create the containers on the docker hub and run docker-compose through the command
+4. In the docker-compose.yml file replace all occurrences of csegovia with your docker hub username. Unfortunately we couldn't get docker compose to recognize the environment variables.
+
+5. Navigate to the prixbanque folder. Compile and create the containers on the docker hub and run docker-compose through the command
   ```sh
   ./localdocker.sh
   ```
