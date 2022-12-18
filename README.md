@@ -41,10 +41,23 @@ _Below is an example of how you can instruct your audience on installing and set
   POSTGRES_PASSWORD
   ```
 4. In the docker-compose.yml file replace all occurrences of csegovia with your docker hub username. Unfortunately we couldn't get docker compose to recognize the environment variables.
-
-5. Navigate to the prixbanque folder. Compile and create the containers on the docker hub and run docker-compose through the command
+5. Add your docker hub username and password in the settings.xml file between the servers tag. On Ubuntu it is located at ~/.m2/settings.xml
+  ```xml
+     <servers>
+         <server>
+             <id>registry.hub.docker.com</id>
+             <username></username>
+             <password></password>
+         </server>
+     </servers>
+   ```
+6. Navigate to the prixbanque folder. Compile and create the containers on the docker hub and run docker-compose through the command
   ```sh
   ./localdocker.sh
+  ```
+  Or just to run the containers
+  ```sh
+  docker compose up -d
   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
