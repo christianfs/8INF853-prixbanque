@@ -1,54 +1,102 @@
-# 8INF853 - Prixbanque Microservices
+# UQAC - 8INF853 - Prixbanque Microservices
 
-## Le MVP doit répondre aux exigences suivantes :
 
-### a) fonctionnelles :
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
-1. Les clients doivent pouvoir de créer un compte (moyenne priorité)
-    > [account-service](https://github.com/christianfs/8INF853-prixbanque/tree/main/prixbanque/account-service)
+### Prixbanque Microservices
 
-2. Les clients doivent pouvoir s'authentifier (basse priorité)
-    > [authentication-service](https://github.com/christianfs/8INF853-prixbanque/tree/main/prixbanque/authentication-service)
+PrixBanque is a new "fintech" that seeks to develop simple, reliable, secure and 100% digital solutions for the financial life of its customers.
 
-3. Les clients doiventi pouvoir consulter leur relevé actuel (moyenne priorité)
-    > [statement-service](https://github.com/christianfs/8INF853-prixbanque/tree/main/prixbanque/statement-service)
+### Built With
 
-4. Les clients doivent pouvoir envoyer un virement à un autre client (haute priorité)
-    > [transfer-service](https://github.com/christianfs/8INF853-prixbanque/tree/main/prixbanque/transfer-service)
+* Java 11
+* Spring Boot
+* Lombok
+* Spring Cloud Netflix
+* Spring for Apache Kafka
+* Spring Cloud Gateway
+* MongoDB
+* PostgreSQL
+* Docker Compose
 
-### b) de développement  :
+<!-- GETTING STARTED -->
+## Getting Started
 
-- [x] utiliser le contrôle de version
-- [x] utiliser des mécanismes de «build»  (comme le Travis, le Maven, le Gradle, etc)
-- [ ] optionnel: utiliser une version préliminaire des techniques de «Continuous Integration»
-    - Outils suggérées:  Jenkins, TravisCI,  CircleCI, GitLab, etc
+The project uses docker-compose. For the generation of containers, we use [docker hub](https://hub.docker.com/). To run the system in docker, a free account must be created on the site above. However, it is also possible to run through an IDE. We recommend using IntelliJ to identify and run the services directly through it.
 
-### c) architecteturaux :
+### Installation
 
-- [x] créer un microservice pour chaque exigence fonctionnelle
-- [ ] optionnel : créer des tests unitaires pour les microservices
-- [x] optionnel : fournir un API gateway pour les microservices
-- [x] utiliser dans l'architecture un load balancer
-    - optionnel : Travailler avec [Docker Compose](https://docs.docker.com/compose)
-- [x] utiliser comme outil de données le MongoDB ou le Firebase Database
+_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
-### d) de documentation :
+1. Create a free account at [docker hub](https://hub.docker.com/) and get your user name
+2. Clone the repo
+   ```sh
+   git clone git@github.com:christianfs/8INF853-prixbanque.git
+   ```
+3. Set the environment variables
+  ```
+  POSTGRES_USER
+  POSTGRES_PASSWORD
+  DOCKERHUB_USERACCOUNT
+  ```
+4. Navigate to the prixbanque folder. Compile and create the containers on the docker hub and run docker-compose through the command
+  ```sh
+  ./localdocker.sh
+  ```
 
-- [ ] créer un  guide d'installation et d'utilisation (simple) avec le instructions de déploiement dans le README.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Preuve de concept:
 
-1. Démontrez le nombre de transactions par seconde que le MVP peut effectuer et comment l'architecture y contribue.
-Pour cela, utilisez la fonctionnalité de virement.
 
-2. Enregistrer une vidéo avec la démo et mettez le lien dans le README.
+<!-- Usage -->
+## Usage
 
-## Rapport :
+### Endpoints (in the Docker container)
 
-1. Introduction : avec context et problématique du projet 3
+- POST Account: http://localhost:8181/api/account
+    - Body:
+    ```json
+    {
+        "firstName": "FirstName",
+        "lastName": "LastName",
+        "email": "email@email.com",
+        "phone": "3434434232",
+        "address": "Address",
+        "password":"xxxxxxx"
+    }
+    ```
+- GET All Accounts: http://localhost:8181/api/account
+- GET Account: http://localhost:8181/api/account/[accountNumber]
+- PUT Account deposit: http://localhost:8181/api/core/transaction/deposit
+    - Body:
+    ```json
+    {
+        "accountNumber": "243320510",
+        "amount": 20.00
+    }
+    ```
+- PUT Account withdraw: http://localhost:8181/api/core/transaction/withdraw
+    - Body:
+    ```json
+    {
+        "accountNumber": "243320510",
+        "amount": 20.00
+    }
+    ```
+- PUT Transfer: http://localhost:8181/api/core/transaction/fund-transfer
+    - Body:
+    ```json
+    {
+        "accountNumber": "243320510",
+        "recipientAccountNumber": "660335100",
+        "amount": 1.45
+    }
+    ```
+- GET All Balance Accounts: http://localhost:8181/api/core/balance-account
+- GET All Statements: http://localhost:8181/api/statement
+- GET Statement By Account Number And Between Dates: http://localhost:8181/api/statement/accountNumber/[accountNumber]/startDate/[startDate]/endDate/[endDate]
+    - Date format: yyyy-MM-dd
 
-2. MVP : Description du MVP selon les sections du item (1)
 
-3. Preuve de concept : Expliquez les objectifs de la preuve de concept, comment elle a été réalisée, quels outils étaient nécessaires et quels en ont été les résultats. Discuter la contribuition de l'architecture pour lé résultat obtenu.
-
-4. Conclusion en tenant compte du travail effectué sur tous les projets (PP1, PP2, PP3) jusqu'à celui-ci.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
