@@ -1,6 +1,7 @@
 <a name="readme-top"></a>
 # UQAC - 8INF853 - Prixbanque Microservices
 
+[Lien](https://drive.google.com/file/d/1skjqWD3hhMc1dK2ojQvMADW9w4IWQERz/view?usp=sharing) pour accéder à la vidéo de présentation.
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
