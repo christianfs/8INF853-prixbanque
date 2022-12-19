@@ -28,10 +28,15 @@ public class TransactionService {
     public boolean fundTransfer(FundTransferRequest fundTransferRequest) {
 
         UUID transactionId = UUID.randomUUID();
-        internalWithdraw(
+        boolean madeWithdraw = internalWithdraw(
                 new DepositWithdrawRequest(fundTransferRequest.getAccountNumber(), fundTransferRequest.getAmount()),
                 transactionId
         );
+
+        if(!madeWithdraw) {
+            return false;
+        }
+
         internalDeposit(
                 new DepositWithdrawRequest(fundTransferRequest.getRecipientAccountNumber(), fundTransferRequest.getAmount()),
                 transactionId
